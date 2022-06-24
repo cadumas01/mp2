@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 )
 
 const BufSize int = 1024
@@ -28,10 +29,9 @@ func StartServer(port int, c configurations.Config) {
 	outConns := make(map[string]net.Conn)
 
 	// handles input from server CLI
-	go handleServer(outConns)
-
 	go acceptClients(inConns, outConns, ln)
 
+	handleServer(outConns)
 }
 
 func Listen(port int) (ln net.Listener) {
@@ -59,7 +59,7 @@ func acceptClients(inConns map[string]net.Conn, outConns map[string]net.Conn, ln
 		}
 
 		// Get accepted id to add to list
-		buf := make([]byte, bufSize)
+		buf := make([]byte, BufSize)
 		_, err = bufio.NewReader(conn).Read(buf)
 
 		// if err is empty, we have a message and can print it
@@ -68,7 +68,7 @@ func acceptClients(inConns map[string]net.Conn, outConns map[string]net.Conn, ln
 		}
 
 		port := conn.RemoteAddr().String()            // temp?
-		fmt.Println("accepted port = " + port)        // temp?
+		fmt.Println("\naccepted port = " + port)      // temp?
 		acceptedUn := string(bytes.Trim(buf, "\x00")) //trims buf of empty bytes
 
 		// Un = client username
@@ -106,7 +106,7 @@ func connectTo(username string, outConns map[string]net.Conn) {
 func handleConnection(conn net.Conn, outConns map[string]net.Conn) {
 	// loop to allow for many connection handling
 	for {
-		buf := make([]byte, bufSize)
+		buf := make([]byte, BufSize)
 		_, err := bufio.NewReader(conn).Read(buf)
 
 		if err != nil {
@@ -122,6 +122,7 @@ func handleConnection(conn net.Conn, outConns map[string]net.Conn) {
 func relayMessage(message *messages.Message, outConns map[string]net.Conn) {
 	// if message.To is in outConns...
 	if conn, ok := outConns[message.To]; ok {
+		fmt.Println("\nRelaying a message from '" + message.From + "' to '" + message.To + "' \n")
 		_, err := conn.Write([]byte(message.String()))
 
 		if err != nil {
@@ -144,7 +145,7 @@ func handleServer(outConns map[string]net.Conn) {
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
-
+		input = strings.Replace(input, "\n", "", -1) // trim newline
 		if input == Exit {
 			exitAll(outConns)
 		}
@@ -153,6 +154,7 @@ func handleServer(outConns map[string]net.Conn) {
 
 func exitAll(outConns map[string]net.Conn) {
 
+	fmt.Println("Exiting clients...")
 	// send exit command to all clients
 	for _, conn := range outConns {
 		_, err := conn.Write([]byte(Exit))
@@ -162,5 +164,6 @@ func exitAll(outConns map[string]net.Conn) {
 	}
 
 	// exit server
+	fmt.Println("Exiting server...")
 	os.Exit(0)
 }

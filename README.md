@@ -25,4 +25,4 @@
 - TO and FROM fields much match usernames of clients in config.json
 
 
-- Investigate whether clients can have same ports / ips
+- Servers and Clients have same IP (hostAddress) but unique ports

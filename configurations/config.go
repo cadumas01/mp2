@@ -2,7 +2,6 @@ package configurations
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -13,7 +12,7 @@ type Config struct {
 }
 
 type Server struct {
-	Port int `json:"port"`
+	Port int `json:"portServer"`
 }
 
 type Client struct {
@@ -23,14 +22,18 @@ type Client struct {
 }
 
 func GetConfig() Config {
-	jsonFile, err := os.Open("config.json")
+	jsonFile, err := os.Open("configurations/config.json")
 
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	// Must unmarshall the json object
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, err := ioutil.ReadAll(jsonFile)
+
+	if err != nil {
+		panic(err)
+	}
 
 	var c Config
 	json.Unmarshal(byteValue, &c)

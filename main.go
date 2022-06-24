@@ -13,7 +13,7 @@ var config configurations.Config
 var MyConstant int = 512
 
 func usage() {
-	fmt.Println("USAGE:\n\tTo start server (do this first): go run main.go server\n\tTo start a node: go run main.go [CLIENT_USERNAME]\n\t**CLIENT_USERNAME must be with client in config.json")
+	fmt.Println("USAGE:\n\tTo start server (do this first): go run main.go server\n\tTo start a node: go run main.go client [CLIENT_USERNAME]\n\t**CLIENT_USERNAME must be with client in config.json")
 }
 
 func main() {
@@ -21,11 +21,11 @@ func main() {
 
 	// Starting Node / CLI handling
 	args := os.Args
-	if len(args) == 2 && args[1] == "Server" {
+	if len(args) == 2 && args[1] == "server" {
 		port, _ := configurations.QuerryConfig(config, "server", "")
 		server.StartServer(port, config)
 
-	} else if len(args) == 3 && args[1] == "Client" {
+	} else if len(args) == 3 && args[1] == "client" {
 		username := args[2]
 		port, hostAddress := configurations.QuerryConfig(config, "client", username)
 		if port == 0 {
@@ -35,9 +35,8 @@ func main() {
 		}
 		client.StartClient(username, port, hostAddress, config)
 
+	} else {
+		usage()
+		os.Exit(1)
 	}
-
-	usage()
-	os.Exit(1)
-
 }

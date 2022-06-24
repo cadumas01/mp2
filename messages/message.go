@@ -12,7 +12,7 @@ type Message struct {
 }
 
 func (m Message) String() string {
-	return fmt.Sprintf("To: %s\nFrom:  %s\nContent: %s\n",
+	return fmt.Sprintf("To: %s\nFrom: %s\nContent: %s\n",
 		m.To, m.From, m.Content)
 }
 

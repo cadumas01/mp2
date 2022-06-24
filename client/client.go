@@ -41,7 +41,7 @@ func StartClient(username string, port int, hostAddress string, c configurations
 	go handleCLI(outConn)
 
 	// 3. (goroutine) Be available to receive messages
-	go handleConnection(inConn)
+	handleConnection(inConn)
 }
 
 func connectToServer() (outConn net.Conn) {

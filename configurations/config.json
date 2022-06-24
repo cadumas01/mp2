@@ -1,6 +1,6 @@
 {
     "server":{
-        "port":1001
+        "portServer":1000
     },
     "clients":[
         {
@@ -11,12 +11,17 @@
         },
         {
             "username":"B",
-            "port": 1001,
+            "port": 1002,
             "hostAddress":"127.0.0.1"
         },
         {
             "username":"C",
-            "port": 1001,
+            "port": 1003,
+            "hostAddress":"127.0.0.1"
+        },
+        {
+            "username":"D",
+            "port": 1004,
             "hostAddress":"127.0.0.1"
         }
     ]

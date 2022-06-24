@@ -10,8 +10,6 @@ import (
 
 var config configurations.Config
 
-var MyConstant int = 512
-
 func usage() {
 	fmt.Println("USAGE:\n\tTo start server (do this first): go run main.go server\n\tTo start a node: go run main.go client [CLIENT_USERNAME]\n\t**CLIENT_USERNAME must be with client in config.json")
 }

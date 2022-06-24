@@ -35,7 +35,8 @@ func StartClient(username string, port int, hostAddress string, c configurations
 		panic("error accepting")
 	}
 
-	fmt.Println("Server successfully reconnected")
+	fmt.Println("Server successfully reconnected. Message channel opened")
+	sendUsage()
 
 	// 2. (goroutine) Be available to send messages
 	go handleCLI(outConn)
@@ -66,31 +67,39 @@ func connectToServer() (outConn net.Conn) {
 
 // Handles sending messages
 func handleCLI(outConn net.Conn) {
-	reader := bufio.NewReader(os.Stdin)
-	text, _ := reader.ReadString('\n')
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		text, _ := reader.ReadString('\n')
 
-	//strip new line
-	text = strings.Replace(text, "\n", "", -1)
+		//strip new line
+		text = strings.Replace(text, "\n", "", -1)
 
-	textArr := strings.Split(text, " ")
+		textArr := strings.Split(text, " ")
 
-	if len(textArr) < 3 {
-		sendUsage()
-		return
+		if len(textArr) < 3 {
+			fmt.Println("Invalid Command")
+			sendUsage()
+			return
+		}
+
+		// Build message
+		destination := textArr[1]
+		if !configurations.Exists(config, "client", destination) {
+			fmt.Println("Invalid Destination")
+			continue
+		}
+
+		content := strings.Join(textArr[2:], " ")
+		message := messages.NewMessage(destination, self.Username, content)
+
+		// Send Message
+		outConn.Write([]byte(message.String()))
+		fmt.Println("")
 	}
-
-	// Build message
-	destination := textArr[1]
-	content := strings.Join(textArr[2:], " ")
-	message := messages.NewMessage(destination, self.Username, content)
-
-	// Send Message
-	outConn.Write([]byte(message.String()))
-	fmt.Println("Send message to server")
 }
 
 func sendUsage() {
-	fmt.Println("Invalid command\nSend Message with: send [DESTINATION_USERNAME] [MESSAGE]")
+	fmt.Println("\nSend Message with: send [DESTINATION_USERNAME] [MESSAGE]")
 }
 
 // Handles incoming messages
@@ -113,6 +122,6 @@ func handleConnection(inConn net.Conn) {
 			os.Exit(0)
 		}
 
-		fmt.Println("Received a message:\n'" + messageString)
+		fmt.Println("\nReceived a message:\n" + messageString)
 	}
 }

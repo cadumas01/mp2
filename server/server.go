@@ -19,7 +19,7 @@ var config configurations.Config
 const Exit string = "EXIT"
 
 func StartServer(port int, c configurations.Config) {
-
+	fmt.Println("Exit server and all clients with: EXIT")
 	config = c
 
 	ln := Listen(port)

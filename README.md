@@ -26,3 +26,4 @@
 
 
 - Servers and Clients have same IP (hostAddress) but unique ports
+- Ports may not be 0

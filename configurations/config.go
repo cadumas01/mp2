@@ -66,3 +66,8 @@ func querryClients(clients []Client, username string) (port int, hostAddress str
 	}
 	return 0, ""
 }
+
+func Exists(config Config, processType string, clientUsername string) bool {
+	port, _ := QuerryConfig(config, processType, clientUsername)
+	return port != 0
+}

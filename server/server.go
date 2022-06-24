@@ -18,6 +18,7 @@ var config configurations.Config
 
 const Exit string = "EXIT"
 
+// Starts a server process
 func StartServer(port int, c configurations.Config) {
 	fmt.Println("Exit server and all clients with: EXIT")
 	config = c
@@ -34,6 +35,7 @@ func StartServer(port int, c configurations.Config) {
 	handleServer(outConns)
 }
 
+// Listens to a port. client.go also uses this
 func Listen(port int) (ln net.Listener) {
 	address := ":" + strconv.Itoa(port)
 	ln, err := net.Listen("tcp", address)
@@ -84,6 +86,7 @@ func acceptClients(inConns map[string]net.Conn, outConns map[string]net.Conn, ln
 	}
 }
 
+// Connects back to the client that just dialed in and adds to map
 func connectTo(username string, outConns map[string]net.Conn) {
 	port, hostAddress := configurations.QuerryConfig(config, "client", username)
 

@@ -6,24 +6,36 @@
 
 - Send a message to another user with: ```send [DESTINATION_USERNAME] [MESSAGE]```
 
-# Ideas / Notes
-- Server contains map of all incoming connections and outgoing connections
-    - All messagses go through server
-    - Server has many incoming connections, and many outgoing connections 
-        - We use two different maps so clients can have an outgoing channel and incoming channel
-            - Use of gourtines becomes easier 
-    - Each Client has one incoming connection and one outgoing connection (server)
+# Model
+- One server, many clients
+- To pass a message from client A to client B:
+    - Client A sends message to server
+    - Server sends message to Client B
 
-- Server relaying message to destination:
-    - First see if conn exits in map
-    - If not, then search config file for port /address to dial
-        - If not found, print error
-    - If dial fails then destination is not connected (print error)
+- Each client has two connections with the server: incoming and outgoing
+    - Each are on separate goroutines
+    - Outgoing channel interpret message sending commands, sending messages to server
+    - Incoming channel interprets incoming text and displays messages to stdout
+
+- Server has a goroutine for each incoming and outgoing channel per client connection
+    - Incoming channels interpret messages (looking at "To" field) to relay message to final destination using outgoing channels
+        - Server manages incoming and outgoing connections with maps: mapping client username to corresponding connection instance
+    - Goroutines allow server to listen for inputs from (and relay messagest to) all clients concurrently
+    - Server checks to make sure message destination exits and is connected, and handles error otherwise
+- Server has separate gourtine listening to it's stdin for exit command ```EXIT``` to exit all processes
+
 
 # Message Guidelines
-- Message Content may not have new lines
+- Message content may not have new lines
 - TO and FROM fields much match usernames of clients in config.json
 
-
-- Servers and Clients have same IP (hostAddress) but unique ports
+# Config Guidelines
+- Servers and clients have same IP (hostAddress) but must have unique ports
 - Ports may not be 0
+
+# Resources
+
+[Assignment instructions](https://docs.google.com/document/d/1gTO2W30h6_OWS-DFlSgiaMMHuyShgG3OBxVbcWnb1Ug/edit) 
+
+Modeled after: [mp1](https://github.com/cadumas01/mp1)
+

@@ -16,6 +16,7 @@ import (
 var config configurations.Config
 var self *configurations.Client
 
+// Starts a client process
 func StartClient(username string, port int, hostAddress string, c configurations.Config) {
 	config = c
 	self = &configurations.Client{Username: username, Port: port, HostAddress: hostAddress}

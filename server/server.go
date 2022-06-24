@@ -11,11 +11,11 @@ import (
 	"strconv"
 )
 
-const bufSize int = 1024
+const BufSize int = 1024
 
 var config configurations.Config
 
-const exit string = "EXIT"
+const Exit string = "EXIT"
 
 func StartServer(port int, c configurations.Config) {
 
@@ -145,7 +145,7 @@ func handleServer(outConns map[string]net.Conn) {
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
 
-		if input == exit {
+		if input == Exit {
 			exitAll(outConns)
 		}
 	}
@@ -155,7 +155,7 @@ func exitAll(outConns map[string]net.Conn) {
 
 	// send exit command to all clients
 	for _, conn := range outConns {
-		_, err := conn.Write([]byte(exit))
+		_, err := conn.Write([]byte(Exit))
 		if err != nil {
 			panic("error writing exit command")
 		}

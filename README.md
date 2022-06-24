@@ -2,6 +2,10 @@
  a simple chat room application that supports only private message
 
 
+# Usage
+
+- Send a message to another user with: ```send [DESTINATION_USERNAME] [MESSAGE]```
+
 # Ideas / Notes
 - Server contains map of all incoming connections and outgoing connections
     - All messagses go through server
